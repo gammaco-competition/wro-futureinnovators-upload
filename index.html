@@ -196,170 +196,174 @@
     </div>
   </div>
 
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    // *** เปลี่ยน URL นี้เป็น Web App URL ของคุณ ***
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx-WqymrLwhtL4Bd_szI3sRZke6y3-sWCj7KCL4ziOyWEH6fLxuT6URKeTK2lLM-RHu/exec";
+  /** 
+   * [1] CONFIGURATION
+   */
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx-WqymrLwhtL4Bd_szI3sRZke6y3-sWCj7KCL4ziOyWEH6fLxuT6URKeTK2lLM-RHu/exec";
+  let globalData = {};
 
-    let globalData = {};
+  /** 
+   * [2] LIFECYCLE - การทำงานเมื่อโหลดหน้าจอ
+   */
+  window.onload = init;
 
-    async function init() {
-  try {
-    const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
-    const data = await response.json();
-    
-    // ใช้เวลาจาก Server เป็นหลัก (แม่นยำกว่าเวลาเครื่องผู้ใช้)
-    const now = data.config.serverTime; 
+  async function init() {
+    const loader = document.getElementById('page-loader'); // ดึง Loader
+    const mainContent = document.getElementById('main-content'); // ดึงเนื้อหาหลัก
 
-    // 1. ตรวจสอบว่า "ยังไม่เปิด"
-    if (now < data.config.open) {
-      showStatusPage("Coming Soon", "ระบบจะเปิดให้อัพโหลดผลงานวันที่ 1 กรกฎาคม 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
-      return;
-    }
-
-    // 2. ตรวจสอบว่า "ปิดแล้ว"
-    if (now > data.config.close) {
-      showStatusPage("Closed", "ขออภัย! ระบบปิดรับผลงานเรียบร้อยแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
-      return;
-    }
-
-    // 3. ถ้าอยู่ในเวลาปกติ ให้โหลด Dropdown ตามเดิม
-    globalData = data.dropDown;
-    setupDropdowns(globalData);
-    
-  } catch (err) {
-    console.error("Error:", err);
-    document.getElementById('colA').innerHTML = '<option>เกิดข้อผิดพลาดในการโหลดข้อมูล</option>';
-  }
-}
-
-// ฟังก์ชันสำหรับเปลี่ยนหน้าจอเมื่อระบบปิด/ยังไม่เปิด
-function showStatusPage(title, message, imageUrl) {
-  document.body.innerHTML = `
-    <div class="container text-center" style="padding-top: 100px; font-family: 'Prompt', sans-serif;">
-      <img src="${imageUrl}" style="width: 100%; max-width: 600px; margin-bottom: 30px; border-radius: 20px; shadow: 0 10px 30px rgba(0,0,0,0.1);">
-      <h1 class="fw-bold" style="color: #1a237e;">${title}</h1>
-      <p class="lead text-secondary">${message}</p>
-      <hr style="width: 200px; margin: 20px auto;">
-      <p>หากมีข้อสงสัยติดต่อ 02-459-4731-8 ต่อ 515-516</p>
-    </div>
-  `;
-}
-
-    function setupDropdowns(obj) {
-  const colA = document.getElementById('colA');
-  const colB = document.getElementById('colB');
-  const colC = document.getElementById('colC');
-  const colD = document.getElementById('colD');
-
-  // ฟังก์ชันช่วยตรวจสอบว่าค่ามีข้อมูลจริงหรือไม่ (ไม่ใช่ค่าว่าง)
-  const hasValue = (val) => val && val.toString().trim() !== "";
-  
-  // ฟังก์ชันเรียงลำดับแบบธรรมชาติ (1, 2, 10 แทนที่จะเป็น 1, 10, 2)
-  const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-
-  // ล้างค่าเริ่มต้น
-  colA.innerHTML = '<option value="">กรุณาเลือกช่วงอายุ...</option>';
-  
-  // 1. ดึง Key ของ colA เฉพาะที่มีข้อมูลและเรียงลำดับ
-  Object.keys(obj)
-    .filter(hasValue)
-    .sort(naturalSort)
-    .forEach(x => colA.options.add(new Option(x, x)));
-
-  colA.onchange = function() {
-    colB.length = 1; colC.length = 1; colD.length = 1;
-    if (obj[this.value]) {
-      // 2. ดึง Key ของ colB เฉพาะที่มีข้อมูล
-      Object.keys(obj[this.value])
-        .filter(hasValue)
-        .sort(naturalSort)
-        .forEach(y => colB.options.add(new Option(y, y)));
-    }
-  };
-
-  colB.onchange = function() {
-    colC.length = 1; colD.length = 1;
-    const sub = obj[colA.value][this.value];
-    if (sub) {
-      // 3. ดึง Key ของ colC เฉพาะที่มีข้อมูล
-      Object.keys(sub)
-        .filter(hasValue)
-        .sort(naturalSort)
-        .forEach(z => colC.options.add(new Option(z, z)));
+    try {
+      const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
+      const data = await response.json();
       
-      // เลือกอันแรกให้อัตโนมัติถ้ามีข้อมูล
-      if (colC.options.length > 1) { 
-        colC.selectedIndex = 1; 
-        colC.dispatchEvent(new Event('change')); 
+      // ใช้เวลาจาก Server เป็นหลัก
+      const now = data.config.serverTime; 
+
+      // ตรวจสอบเวลาเปิด-ปิด
+      if (now < data.config.open) {
+        if(loader) loader.remove();
+        showStatusPage("Coming Soon", "ระบบจะเปิดให้อัพโหลดผลงานวันที่ 1 กรกฎาคม 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+        return;
       }
-    }
-  };
 
-  colC.onchange = function() {
-    colD.length = 1;
-    const final = obj[colA.value][colB.value][this.value];
-    if (final) {
-      // 4. ดึงข้อมูลใน Array ของ colD เฉพาะที่มีข้อมูลและไม่ซ้ำ (Unique)
-      const uniqueFinal = [...new Set(final.filter(hasValue))];
-      uniqueFinal.sort(naturalSort).forEach(d => colD.options.add(new Option(d, d)));
+      if (now > data.config.close) {
+        if(loader) loader.remove();
+        showStatusPage("Closed", "ขออภัย! ระบบปิดรับผลงานเรียบร้อยแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+        return;
+      }
+
+      // สถานะปกติ: โหลด Dropdown และแสดงฟอร์ม
+      globalData = data.dropDown;
+      setupDropdowns(globalData);
       
-      if (colD.options.length > 1) colD.selectedIndex = 1;
+      // ซ่อน Loader และโชว์เนื้อหาหลัก (แก้ปัญหาหน้าแวบ)
+      if(loader) loader.style.display = 'none';
+      if(mainContent) mainContent.style.display = 'block';
+      
+    } catch (err) {
+      console.error("Error:", err);
+      if(loader) loader.innerHTML = '<p class="text-danger">เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณารีเฟรชหน้าจอ</p>';
     }
-  };
-}
+  }
 
-    document.getElementById('myForm').onsubmit = async function(e) {
-      e.preventDefault();
-      $('#btn1').hide(); $('#btn2').show();
+  /** 
+   * [3] DROPDOWN LOGIC - จัดการการเลือกค่าในฟอร์ม
+   */
+  function setupDropdowns(obj) {
+    const colA = document.getElementById('colA');
+    const colB = document.getElementById('colB');
+    const colC = document.getElementById('colC');
+    const colD = document.getElementById('colD');
 
-      const fileInput = document.getElementById('file');
-      const file = fileInput.files[0];
-      const payload = {
-        data1: $('#colA').val(),
-        data2: $('#colB').val(),
-        data3: $('#colC').val(),
-        data4: $('#colD').val(),
-        data5: $('#data5').val()
-      };
+    const hasValue = (val) => val && val.toString().trim() !== "";
+    const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async function() {
-          payload.imagedata = reader.result.split(',')[1];
-          payload.filename = file.name;
-          payload.filetype = file.type;
-          await sendToGoogle(payload);
-        };
-      } else {
-        await sendToGoogle(payload);
+    colA.innerHTML = '<option value="">กรุณาเลือกช่วงอายุ...</option>';
+    
+    // Step 1: Age Group
+    Object.keys(obj).filter(hasValue).sort(naturalSort).forEach(x => colA.options.add(new Option(x, x)));
+
+    // Step 2: Team ID
+    colA.onchange = function() {
+      colB.length = 1; colC.length = 1; colD.length = 1;
+      if (obj[this.value]) {
+        Object.keys(obj[this.value]).filter(hasValue).sort(naturalSort).forEach(y => colB.options.add(new Option(y, y)));
       }
     };
 
-    async function sendToGoogle(data) {
-      try {
-        const response = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          body: JSON.stringify(data)
-        });
-        const res = await response.json();
-        if (res.status === 'success') {
-          Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' });
-          document.getElementById('myForm').reset();
-        } else {
-          throw new Error(res.message);
+    // Step 3: Team Name
+    colB.onchange = function() {
+      colC.length = 1; colD.length = 1;
+      const sub = obj[colA.value][this.value];
+      if (sub) {
+        Object.keys(sub).filter(hasValue).sort(naturalSort).forEach(z => colC.options.add(new Option(z, z)));
+        if (colC.options.length > 1) { 
+          colC.selectedIndex = 1; 
+          colC.dispatchEvent(new Event('change')); 
         }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.toString() });
-      } finally {
-        $('#btn1').show(); $('#btn2').hide();
       }
+    };
+
+    // Step 4: Institution
+    colC.onchange = function() {
+      colD.length = 1;
+      const final = obj[colA.value][colB.value][this.value];
+      if (final) {
+        const uniqueFinal = [...new Set(final.filter(hasValue))];
+        uniqueFinal.sort(naturalSort).forEach(d => colD.options.add(new Option(d, d)));
+        if (colD.options.length > 1) colD.selectedIndex = 1;
+      }
+    };
+  }
+
+  /** 
+   * [4] FORM SUBMISSION - การส่งข้อมูลไปยัง Google Sheets
+   */
+  document.getElementById('myForm').onsubmit = async function(e) {
+    e.preventDefault();
+    $('#btn1').hide(); $('#btn2').show(); // สลับปุ่มเป็น Loading
+
+    const fileInput = document.getElementById('file');
+    const file = fileInput.files[0];
+    const payload = {
+      data1: $('#colA').val(),
+      data2: $('#colB').val(),
+      data3: $('#colC').val(),
+      data4: $('#colD').val(),
+      data5: $('#data5').val()
+    };
+
+    // กรณีมีการแนบไฟล์ PDF
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async function() {
+        payload.imagedata = reader.result.split(',')[1];
+        payload.filename = file.name;
+        payload.filetype = file.type;
+        await sendToGoogle(payload);
+      };
+    } else {
+      await sendToGoogle(payload);
     }
+  };
 
-    document.getElementById("btnStatus").onclick = () => window.open("https://gammaco.co.th/wro/teams-status-future-innovators/", "_blank");
+  async function sendToGoogle(data) {
+    try {
+      const response = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      const res = await response.json();
+      if (res.status === 'success') {
+        Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' });
+        document.getElementById('myForm').reset();
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.toString() });
+    } finally {
+      $('#btn1').show(); $('#btn2').hide();
+    }
+  }
 
-    window.onload = init;
-  </script>
+  /** 
+   * [5] UI HELPERS - จัดการหน้าแสดงผลสถานะ
+   */
+  function showStatusPage(title, message, imageUrl) {
+    document.body.innerHTML = `
+      <div class="container text-center" style="padding-top: 100px; font-family: 'Prompt', sans-serif;">
+        <img src="${imageUrl}" style="width: 100%; max-width: 600px; margin-bottom: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <h1 class="fw-bold" style="color: #1a237e;">${title}</h1>
+        <p class="lead text-secondary">${message}</p>
+        <hr style="width: 200px; margin: 20px auto;">
+        <p>หากมีข้อสงสัยติดต่อ 02-459-4731-8 ต่อ 515-516</p>
+      </div>
+    `;
+  }
+
+  document.getElementById("btnStatus").onclick = () => window.open("https://gammaco.co.th/wro/teams-status-future-innovators/", "_blank");
+</script>
 </body>
 </html>
