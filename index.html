@@ -38,6 +38,19 @@
       margin-top: 30px;
     }
 
+    /* สไตล์สำหรับรูป Banner หลัก */
+    .banner-img-container {
+      width: 100%;
+      max-height: 400px;
+      overflow: hidden;
+    }
+
+    .banner-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .info-box {
       background-color: #fff5f8;
       border-left: 5px solid var(--primary-color);
@@ -73,15 +86,6 @@
       color: white;
     }
 
-    #summary-box {
-      margin-top: 20px;
-      padding: 15px;
-      background: #eee;
-      border-radius: 10px;
-      font-weight: bold;
-      text-align: center;
-    }
-
     .small-footer {
       background-color: var(--primary-color);
       color: white;
@@ -97,17 +101,20 @@
       <div class="col-lg-10">
         <div class="main-card">
           <div class="header-banner">
-            <h2 class="fw-bold">Future Innovators Documents</h2>
+            <h2 class="fw-bold mb-0">Future Innovators Documents</h2>
             <p class="mb-0 opacity-75">World Robot Olympiad 2026</p>
           </div>
 
-          <div class="card-body p-4 p-md-5">
-            <div id="summary-box">กำลังโหลดข้อมูลสรุปยอดทีม...</div>
+          <div class="banner-img-container">
+            <img src="https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png" alt="WRO Banner">
+          </div>
 
-            <div class="info-box mt-3">
+          <div class="card-body p-4 p-md-5">
+            <div class="info-box">
               <h5><i class="fas fa-exclamation-circle"></i> ข้อกำหนดการส่งผลงาน</h5>
               <p>1. <b>รายงานโครงงาน:</b> ไฟล์ PDF (ไม่เกิน 20 หน้า)</p>
               <p>2. <b>วีดีโอ:</b> ลิงก์ Youtube ความยาวไม่เกิน 90 วินาที</p>
+              <hr>
               <p class="text-danger fw-bold mb-0">* ปิดรับผลงาน: 24 สิงหาคม 2569 (09:00 น.)</p>
             </div>
 
@@ -174,25 +181,22 @@
 
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    // *** สำคัญ: เปลี่ยน URL นี้เป็น Web App URL ของคุณที่ Deploy จาก Google Apps Script ***
+    // *** เปลี่ยน URL นี้เป็น Web App URL ของคุณ ***
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx-WqymrLwhtL4Bd_szI3sRZke6y3-sWCj7KCL4ziOyWEH6fLxuT6URKeTK2lLM-RHu/exec";
 
     let globalData = {};
 
-    // 1. โหลดข้อมูลเริ่มต้น (Dropdown + Summary)
     async function init() {
       try {
         const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
         const data = await response.json();
         globalData = data.dropDown;
-        document.getElementById('summary-box').innerText = data.summary;
         setupDropdowns(globalData);
       } catch (err) {
-        document.getElementById('summary-box').innerText = "ไม่สามารถเชื่อมต่อฐานข้อมูลได้";
+        console.error("Error loading data:", err);
       }
     }
 
-    // 2. ตั้งค่า Dropdown Cascading
     function setupDropdowns(obj) {
       const colA = document.getElementById('colA');
       const colB = document.getElementById('colB');
@@ -202,9 +206,7 @@
       colA.innerHTML = '<option value="">กรุณาเลือกช่วงอายุ...</option>';
       const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true });
       
-      Object.keys(obj).sort(naturalSort).forEach(x => {
-        colA.options.add(new Option(x, x));
-      });
+      Object.keys(obj).sort(naturalSort).forEach(x => colA.options.add(new Option(x, x)));
 
       colA.onchange = function() {
         colB.length = 1; colC.length = 1; colD.length = 1;
@@ -232,7 +234,6 @@
       };
     }
 
-    // 3. จัดการการส่งฟอร์ม
     document.getElementById('myForm').onsubmit = async function(e) {
       e.preventDefault();
       $('#btn1').hide(); $('#btn2').show();
@@ -271,7 +272,6 @@
         if (res.status === 'success') {
           Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' });
           document.getElementById('myForm').reset();
-          init(); // โหลดสรุปยอดใหม่
         } else {
           throw new Error(res.message);
         }
