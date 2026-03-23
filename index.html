@@ -247,13 +247,13 @@
         // ตรวจสอบเวลาเปิด-ปิด
         if (now < data.config.open) {
           if(loader) loader.remove();
-          showStatusPage("Coming Soon", "ระบบจะเปิดให้อัพโหลดผลงานวันที่ 1 กรกฎาคม 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+          showStatusPage("Coming Soon", "เปิดให้อัพโหลดผลงานได้วันที่ 1 มิถุนายน 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
           return;
         }
 
         if (now > data.config.close) {
           if(loader) loader.remove();
-          showStatusPage("Closed", "ขออภัย! ระบบปิดรับผลงานเรียบร้อยแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+          showStatusPage("Closed", "ระบบปิดให้อัพโหลดผลงานแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
           return;
         }
 
