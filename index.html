@@ -204,15 +204,47 @@
     let globalData = {};
 
     async function init() {
-      try {
-        const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
-        const data = await response.json();
-        globalData = data.dropDown;
-        setupDropdowns(globalData);
-      } catch (err) {
-        console.error("Error loading data:", err);
-      }
+  try {
+    const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
+    const data = await response.json();
+    
+    // ใช้เวลาจาก Server เป็นหลัก (แม่นยำกว่าเวลาเครื่องผู้ใช้)
+    const now = data.config.serverTime; 
+
+    // 1. ตรวจสอบว่า "ยังไม่เปิด"
+    if (now < data.config.open) {
+      showStatusPage("Coming Soon", "ระบบจะเปิดให้อัพโหลดผลงานวันที่ 1 กรกฎาคม 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+      return;
     }
+
+    // 2. ตรวจสอบว่า "ปิดแล้ว"
+    if (now > data.config.close) {
+      showStatusPage("Closed", "ขออภัย! ระบบปิดรับผลงานเรียบร้อยแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+      return;
+    }
+
+    // 3. ถ้าอยู่ในเวลาปกติ ให้โหลด Dropdown ตามเดิม
+    globalData = data.dropDown;
+    setupDropdowns(globalData);
+    
+  } catch (err) {
+    console.error("Error:", err);
+    document.getElementById('colA').innerHTML = '<option>เกิดข้อผิดพลาดในการโหลดข้อมูล</option>';
+  }
+}
+
+// ฟังก์ชันสำหรับเปลี่ยนหน้าจอเมื่อระบบปิด/ยังไม่เปิด
+function showStatusPage(title, message, imageUrl) {
+  document.body.innerHTML = `
+    <div class="container text-center" style="padding-top: 100px; font-family: 'Prompt', sans-serif;">
+      <img src="${imageUrl}" style="width: 100%; max-width: 600px; margin-bottom: 30px; border-radius: 20px; shadow: 0 10px 30px rgba(0,0,0,0.1);">
+      <h1 class="fw-bold" style="color: #1a237e;">${title}</h1>
+      <p class="lead text-secondary">${message}</p>
+      <hr style="width: 200px; margin: 20px auto;">
+      <p>หากมีข้อสงสัยติดต่อ 02-459-4731-8 ต่อ 515-516</p>
+    </div>
+  `;
+}
 
     function setupDropdowns(obj) {
   const colA = document.getElementById('colA');
