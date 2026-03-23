@@ -112,8 +112,9 @@
           <div class="card-body p-4 p-md-5">
             <div class="info-box">
               <h5><i class="fas fa-exclamation-circle"></i> ข้อกำหนดการส่งผลงาน</h5>
-              <p>1. <b>รายงานโครงงาน:</b> ไฟล์ PDF (ไม่เกิน 20 หน้า)</p>
-              <p>2. <b>วีดีโอ:</b> ลิงก์ Youtube ความยาวไม่เกิน 90 วินาที</p>
+              <p>1. <b>รายงานโครงงาน :</b> อัพโหลดเป็นไฟล์ PDF (ความยาวไม่เกิน 20 หน้า หรือไม่เกิน 15 MB.)</p>
+              <p>2. <b>วีดีโอ :</b> ความยาวไม่เกิน 90 วินาที (อัปโหลด Youtube และส่งลิงก์)</p>
+              <p> * หากมีข้อสงสัยหรือต้องการสอบถามข้อมูลเพิ่มเติม ติดต่อ 02-459-4731-8 ต่อ 515-516</p>
               <hr>
               <p class="text-danger fw-bold mb-0">* ปิดรับผลงาน: 24 สิงหาคม 2569 (09:00 น.)</p>
             </div>
@@ -198,41 +199,67 @@
     }
 
     function setupDropdowns(obj) {
-      const colA = document.getElementById('colA');
-      const colB = document.getElementById('colB');
-      const colC = document.getElementById('colC');
-      const colD = document.getElementById('colD');
+  const colA = document.getElementById('colA');
+  const colB = document.getElementById('colB');
+  const colC = document.getElementById('colC');
+  const colD = document.getElementById('colD');
 
-      colA.innerHTML = '<option value="">กรุณาเลือกช่วงอายุ...</option>';
-      const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true });
-      
-      Object.keys(obj).sort(naturalSort).forEach(x => colA.options.add(new Option(x, x)));
+  // ฟังก์ชันช่วยตรวจสอบว่าค่ามีข้อมูลจริงหรือไม่ (ไม่ใช่ค่าว่าง)
+  const hasValue = (val) => val && val.toString().trim() !== "";
+  
+  // ฟังก์ชันเรียงลำดับแบบธรรมชาติ (1, 2, 10 แทนที่จะเป็น 1, 10, 2)
+  const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 
-      colA.onchange = function() {
-        colB.length = 1; colC.length = 1; colD.length = 1;
-        if (obj[this.value]) {
-          Object.keys(obj[this.value]).sort(naturalSort).forEach(y => colB.options.add(new Option(y, y)));
-        }
-      };
+  // ล้างค่าเริ่มต้น
+  colA.innerHTML = '<option value="">กรุณาเลือกช่วงอายุ...</option>';
+  
+  // 1. ดึง Key ของ colA เฉพาะที่มีข้อมูลและเรียงลำดับ
+  Object.keys(obj)
+    .filter(hasValue)
+    .sort(naturalSort)
+    .forEach(x => colA.options.add(new Option(x, x)));
 
-      colB.onchange = function() {
-        colC.length = 1; colD.length = 1;
-        const sub = obj[colA.value][this.value];
-        if (sub) {
-          Object.keys(sub).sort(naturalSort).forEach(z => colC.options.add(new Option(z, z)));
-          if (colC.options.length > 1) { colC.selectedIndex = 1; colC.dispatchEvent(new Event('change')); }
-        }
-      };
-
-      colC.onchange = function() {
-        colD.length = 1;
-        const final = obj[colA.value][colB.value][this.value];
-        if (final) {
-          final.sort(naturalSort).forEach(d => colD.options.add(new Option(d, d)));
-          if (colD.options.length > 1) colD.selectedIndex = 1;
-        }
-      };
+  colA.onchange = function() {
+    colB.length = 1; colC.length = 1; colD.length = 1;
+    if (obj[this.value]) {
+      // 2. ดึง Key ของ colB เฉพาะที่มีข้อมูล
+      Object.keys(obj[this.value])
+        .filter(hasValue)
+        .sort(naturalSort)
+        .forEach(y => colB.options.add(new Option(y, y)));
     }
+  };
+
+  colB.onchange = function() {
+    colC.length = 1; colD.length = 1;
+    const sub = obj[colA.value][this.value];
+    if (sub) {
+      // 3. ดึง Key ของ colC เฉพาะที่มีข้อมูล
+      Object.keys(sub)
+        .filter(hasValue)
+        .sort(naturalSort)
+        .forEach(z => colC.options.add(new Option(z, z)));
+      
+      // เลือกอันแรกให้อัตโนมัติถ้ามีข้อมูล
+      if (colC.options.length > 1) { 
+        colC.selectedIndex = 1; 
+        colC.dispatchEvent(new Event('change')); 
+      }
+    }
+  };
+
+  colC.onchange = function() {
+    colD.length = 1;
+    const final = obj[colA.value][colB.value][this.value];
+    if (final) {
+      // 4. ดึงข้อมูลใน Array ของ colD เฉพาะที่มีข้อมูลและไม่ซ้ำ (Unique)
+      const uniqueFinal = [...new Set(final.filter(hasValue))];
+      uniqueFinal.sort(naturalSort).forEach(d => colD.options.add(new Option(d, d)));
+      
+      if (colD.options.length > 1) colD.selectedIndex = 1;
+    }
+  };
+}
 
     document.getElementById('myForm').onsubmit = async function(e) {
       e.preventDefault();
