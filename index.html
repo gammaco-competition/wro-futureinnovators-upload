@@ -1,919 +1,388 @@
 <!DOCTYPE html>
-
 <html>
 
-
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-  <link href="https://fonts.googleapis.com/css2 family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-
-    :root {
-
-      --primary-color: #009fe3; /* สีฟ้าหลัก */
-
-      --secondary-color: #007bb1; /* สีฟ้าเข้มสำหรับ Gradient */
-
-      --bg-light: #f8fafc;
-
-      --info-bg: #e6f5fc; /* สีฟ้าอ่อนสำหรับกล่องข้อมูล */
-
-      --text-dark: #2c3e50;
-
-    }
-
-
-
-    body {
-
-      font-family: 'Prompt', sans-serif;
-
-      background-color: var(--bg-light);
-
-      color: var(--text-dark);
-
-      padding-bottom: 60px;
-
-      font-size: 17px; /* ปรับฟอนต์พื้นฐานให้ใหญ่ขึ้น */
-
-      line-height: 1.6;
-
-    }
-
-
-
-    .main-card {
-
-      background: white;
-
-      border: none;
-
-      border-radius: 24px; /* มนขึ้นเพื่อความทันสมัย */
-
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-
-      overflow: hidden;
-
-      margin-top: 40px;
-
-    }
-
-
-
-    .header-banner {
-
-      background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-
-      color: white;
-
-      padding: 45px 30px; /* เพิ่มพื้นที่แบนเนอร์ */
-
-      text-align: center;
-
-      border-bottom: 6px solid #b3e5fc;
-
-    }
-
-
-
-    .header-banner h2 {
-
-      font-size: 2.2rem; /* ขยายหัวข้อใหญ่ */
-
-      letter-spacing: 0.5px;
-
-    }
-
-
-
-    .header-banner p {
-
-      font-size: 1.2rem;
-
-      margin-top: 5px;
-
-    }
-
-
-
-    /* Section Boxes */
-
-    .section-box {
-
-      background-color: #ffffff;
-
-      border: 2px solid #e2e8f0;
-
-      border-radius: 16px;
-
-      padding: 30px; /* เพิ่มพื้นที่ด้านใน */
-
-      margin-bottom: 30px;
-
-      transition: all 0.3s ease;
-
-    }
-
-
-
-    .section-box:hover {
-
-      border-color: var(--primary-color);
-
-      box-shadow: 0 10px 25px rgba(0, 159, 227, 0.05);
-
-    }
-
-
-
-    .section-title-bar {
-
-      background: var(--info-bg);
-
-      color: var(--secondary-color);
-
-      padding: 12px 20px;
-
-      border-radius: 10px;
-
-      font-size: 1.2rem;
-
-      font-weight: 700;
-
-      margin-bottom: 20px;
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 10px;
-
-    }
-
-
-
-    /* Form Elements */
-
-    .form-label {
-
-      font-size: 1.05rem;
-
-      font-weight: 600;
-
-      color: #34495e;
-
-      margin-bottom: 10px;
-
-      display: flex;
-
-      align-items: center;
-
-    }
-
-
-
-    .form-label i {
-
-      margin-right: 10px;
-
-      color: var(--primary-color);
-
-      font-size: 1.15rem;
-
-    }
-
-
-
-    .form-control,
-
-    .form-select {
-
-      font-size: 1.05rem; /* ขยายขนาดตัวอักษรในการกรอก */
-
-      padding: 12px 18px; /* ขยายขนาดกล่องให้ใหญ่ขึ้นกดง่าย */
-
-      border-radius: 12px;
-
-      border: 2px solid #cbd5e1;
-
-      color: var(--text-dark);
-
-    }
-
-
-
-    .form-control:focus,
-
-    .form-select:focus {
-
-      border-color: var(--primary-color) !important;
-
-      box-shadow: 0 0 0 0.25rem rgba(0, 159, 227, 0.15) !important;
-
-    }
-
-
-
-    /* Description list styling */
-
-    .doc-desc p {
-
-      margin-bottom: 12px;
-
-      font-size: 1rem;
-
-    }
-
-    
-
-    .doc-desc strong {
-
-      color: #1e293b;
-
-      display: inline-block;
-
-      margin-bottom: 2px;
-
-    }
-
-
-
-    /* Buttons */
-
-    .btn-custom-save {
-
-      background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-
-      border: none;
-
-      padding: 16px 45px; /* เพิ่มขนาดปุ่ม */
-
-      border-radius: 50px;
-
-      font-size: 1.15rem;
-
-      font-weight: 600;
-
-      color: white;
-
-      transition: all 0.3s ease;
-
-      box-shadow: 0 10px 20px rgba(0, 159, 227, 0.15);
-
-    }
-
-
-
-    .btn-custom-save:hover {
-
-      transform: translateY(-3px);
-
-      box-shadow: 0 12px 25px rgba(0, 159, 227, 0.3);
-
-      filter: brightness(1.05);
-
-      color: white;
-
-    }
-
-
-
-    .btn-status {
-
-      border: 2px solid #28a745;
-
-      color: #28a745;
-
-      border-radius: 50px;
-
-      padding: 16px 35px;
-
-      font-size: 1.15rem;
-
-      font-weight: 600;
-
-      transition: all 0.3s ease;
-
-    }
-
-
-
-    .btn-status:hover {
-
-      background-color: #28a745;
-
-      color: white;
-
-      transform: translateY(-3px);
-
-      box-shadow: 0 12px 25px rgba(40, 167, 69, 0.2);
-
-    }
-
-
-
-    .small-footer {
-
-      background-color: #0f172a;
-
-      color: #94a3b8;
-
-      padding: 20px;
-
-      font-size: 0.95rem;
-
-      font-weight: 400;
-
-      border-top: 1px solid #1e293b;
-
-    }
-
-    
-
-    .small-footer b {
-
-      color: #fff;
-
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+--primary-color: #ea0a8c;
+--bg-light: #f4f7f6;
+}
+
+body {
+font-family: 'Prompt', sans-serif;
+background-color: var(--bg-light);
+color: #333;
+padding-bottom: 50px;
+}
+
+/* [NEW] ส่วนควบคุมการแสดงผลเพื่อแก้หน้าแวบ */
+#main-content {
+display: none; /* ซ่อนเนื้อหาหลักไว้ก่อน */
+}
+
+#page-loader {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+flex-direction: column;
+background-color: var(--bg-light);
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 9999;
+}
+
+/* Style เดิมของคุณ */
+.header-banner {
+background: linear-gradient(135deg, #c70877 0%, var(--primary-color) 100%);
+color: white;
+padding: 30px 20px;
+text-align: center;
+box-shadow: 0 4px 15px rgba(234, 10, 140, 0.2);
+}
+
+.main-card {
+background: white;
+border: none;
+border-radius: 20px;
+box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+overflow: hidden;
+margin-top: 30px;
+}
+
+.banner-img-container {
+width: 100%;
+max-height: 400px;
+overflow: hidden;
+}
+
+.banner-img-container img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.info-box {
+background-color: #fff5f8;
+border-left: 5px solid var(--primary-color);
+border-radius: 8px;
+padding: 20px;
+margin-bottom: 25px;
+}
+
+.form-label {
+font-weight: 600;
+display: flex;
+align-items: center;
+}
+
+.form-label i {
+margin-right: 8px;
+color: var(--primary-color);
+}
+
+.btn-custom-save {
+background: linear-gradient(135deg, #c70877 0%, var(--primary-color) 100%);
+border: none;
+padding: 12px 40px;
+border-radius: 50px;
+color: white;
+font-weight: 600;
+transition: 0.3s;
+}
+
+.btn-custom-save:hover {
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(234, 10, 140, 0.4);
+color: white;
+}
+
+.small-footer {
+background-color: var(--primary-color);
+color: white;
+padding: 15px;
+font-size: 0.85rem;
+}
+</style>
 </head>
 
-
-
 <body>
-
-  <div class="container">
-
-    <div class="row justify-content-center">
-
-      <div class="col-xl-10 col-lg-11 col-md-12">
-
-        <div class="main-card">
-
-
-
-          <div class="header-banner">
-
-            <h2 class="mb-0 fw-bold">Future Engineers Documents</h2>
-
-            <p class="mb-0 opacity-75">World Robot Olympiad 2026</p>
-
-          </div>
-
-
-
-          <div class="p-0">
-
-            <img src="https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png" class="img-fluid w-100" style="max-height: 420px; object-fit: cover;">
-
-          </div>
-
-
-
-          <div class="card-body p-4 p-md-5">
-
-            <form id="myForm" onsubmit="submitForm()">
-
-              
-
-              <div class="bg-light p-4 rounded-4 mb-4 border">
-
-                <div class="row g-4">
-
-                  <div class="col-md-8">
-
-                    <label class="form-label" for="colA"><i class="fa-solid fa-podcast"></i> Category</label>
-
-                    <select class="form-select" id="colA" required>
-
-                      <option value="" selected>กรุณาเลือกช่วงอายุ...</option>
-
-                    </select>
-
-                  </div>
-
-                  <div class="col-md-4">
-
-                    <label class="form-label" for="colB"><i class="fas fa-users"></i> Team ID</label>
-
-                    <select class="form-select" id="colB" required>
-
-                      <option value="" selected>เลือก ID</option>
-
-                    </select>
-
-                  </div>
-
-                  <div class="col-md-6" id="teamNameGroup">
-
-                    <label class="form-label"><i class="fa-solid fa-pen-to-square"></i> Team Name</label>
-
-                    <select class="form-select" id="colC" required></select>
-
-                  </div>
-
-                  <div class="col-md-6" id="institutionGroup">
-
-                    <label class="form-label"><i class="fa-solid fa-city"></i> Institution</label>
-
-                    <select class="form-select" id="colD" required></select>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-
-              <div class="row g-2">
-
-                
-
-                <div class="col-md-12">
-
-                  <div class="section-box">
-
-                    <div class="section-title-bar">
-
-                      <i class="fas fa-file-alt"></i> 1. เอกสารทางวิศวกรรม (Engineering Report)
-
-                    </div>
-
-                    <div class="ms-2 doc-desc text-muted">
-
-                      <p><strong>1.1 การเคลื่อนที่และกลไก:</strong> อธิบายโครงสร้างรถ ระบบขับเคลื่อน การบังคับเลี้ยว มอเตอร์ ล้อ และเหตุผลที่เลือกใช้</p>
-
-                      <p><strong>1.2 ระบบพลังงานและเซนเซอร์:</strong> อธิบายแหล่งจ่ายไฟ การเดินสาย เซนเซอร์ที่ใช้ ตำแหน่งติดตั้ง และวิธีปรับเทียบ</p>
-
-                      <p><strong>1.3 ซอฟต์แวร์และกลยุทธ์:</strong> อธิบายโครงสร้างโปรแกรม อัลกอริทึม การตามเลน การหลบสิ่งกีดขวาง และการทำงานอัตโนมัติ</p>
-
-                      <p><strong>1.4 การตัดสินใจทางวิศวกรรม:</strong> อธิบายข้อจำกัด การเปรียบเทียบทางเลือก และเหตุผลว่าทำไมจึงเลือกแนวทางนี้</p>
-
-                      <p><strong>1.5 รูปภาพและหลักฐานการทดสอบ:</strong> แนบภาพขั้นตอนการรถ แผนภาพวงจร แผนภาพโครงสร้าง การปรับปรุงแต่ละเวอร์ชันและสามารถพัฒนาต่อยอดได้</p>
-
-                    </div>
-
-                    
-
-                    <div class="mt-4 pt-3 border-top">
-
-                      <label class="form-label fw-bold">
-
-                        <i class="fas fa-file-pdf text-danger"></i> อัพโหลดไฟล์ PDF หรือ Word
-
-                        <span class="ms-2 text-danger" style="font-size: 0.85rem; font-weight: normal;">
-
-                          (คะแนนเพิ่มเติมจากกติกาหน้า 46-58)
-
-                        </span>
-
-                      </label>
-
-                      <input class="form-control" type="file" id="file" accept=".pdf,.doc,.docx" required>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-
-                <div class="col-md-12">
-
-                  <div class="section-box">
-
-                    <div class="section-title-bar">
-
-                      <i class="fab fa-youtube text-danger"></i> 2. วีดีโอผลงาน (Video Presentation)
-
-                    </div>
-
-                    <p class="text-muted mb-3 ms-2"><i class="fas fa-check-circle text-success me-2"></i>แสดงประสิทธิภาพหุ่นยนต์ (ความยาวไม่ต่ำกว่า 30 วินาที)</p>
-
-                    <label class="form-label fw-bold">
-
-                      Link Video (YouTube)
-
-                      <span class="ms-2 text-danger" style="font-size: 0.85rem; font-weight: normal;">
-
-                        (โปรดตั้งค่าเป็น Public หรือ Unlisted)
-
-                      </span>
-
-                    </label>
-
-                    <input type="text" class="form-control" id="data5" placeholder="https://www.youtube.com/watch?v=...">
-
-                  </div>
-
-                </div>
-
-
-
-                <div class="col-md-12">
-
-                  <div class="section-box">
-
-                    <div class="section-title-bar">
-
-                      <i class="fab fa-github text-dark"></i> 3. การแชร์ข้อมูลลง GitHub
-
-                    </div>
-
-                    <p class="text-muted mb-3 ms-2"><i class="fas fa-check-circle text-success me-2"></i>บันทึกความคืบหน้าและซอร์สโค้ด (เปิดสาธารณะไม่ต่ำกว่า 1 ปี)</p>
-
-                    <label class="form-label fw-bold">
-
-                      Link GitHub
-
-                    </label>
-
-                    <input type="text" class="form-control" id="data6" placeholder="https://www.github.com/...">
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-
-              <div class="text-center mt-5 d-grid d-md-flex justify-content-md-center gap-4">
-
-                <button type="submit" class="btn btn-custom-save" id="btn1">
-
-                  <i class="fas fa-cloud-upload-alt me-2"></i> ส่งผลงานตอนนี้
-
-                </button>
-
-                <button class="btn btn-custom-save" id="btn2" type="button" disabled style="display: none;">
-
-                  <span class="spinner-border spinner-border-sm me-2"></span> กำลังประมวลผล...
-
-                </button>
-
-                <button class="btn btn-outline-success btn-status" id="btnStatus" type="button">
-
-                  <i class="fas fa-search me-2"></i> เช็คสถานะการส่ง
-
-                </button>
-
-              </div>
-
-            </form>
-
-          </div>
-
-
-
-          <div class="small-footer text-center">
-
-            Organized by <b>Gammaco (Thailand) Co.,Ltd.</b>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <script>
-
-    /** * [1] CONFIGURATION */
-
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz8PUJhMgUiGqTLquDKgJ1bLZPswHQuocgfbn20Ny6GRHhpyNMlumoeKMA7wFBqALq6/exec";
-
-    let globalData = {};
-
-
-
-    /** * [2] LIFECYCLE - การทำงานเมื่อโหลดหน้าจอ */
-
-    window.onload = init;
-
-
-
-    async function init() {
-
-      const loader = document.getElementById('page-loader');
-
-      const mainContent = document.getElementById('main-content');
-
-
-
-      try {
-
-        const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
-
-        const data = await response.json();
-
-        
-
-        const now = data.config.serverTime; 
-
-
-
-        if (now < data.config.open) {
-
-          showStatusPage("Coming Soon", "เปิดให้อัพโหลดผลงานได้วันที่ 1 มีนาคม 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
-
-          return;
-
-        }
-
-
-
-        if (now > data.config.close) {
-
+<div id="page-loader">
+<div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+<p class="mt-3 fw-bold">Checking System Status...</p>
+</div>
+
+<div id="main-content">
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-lg-10">
+<div class="main-card">
+<div class="header-banner">
+<h2 class="fw-bold mb-0">Future Innovators Documents</h2>
+<p class="mb-0 opacity-75">World Robot Olympiad 2026</p>
+</div>
+
+<div class="banner-img-container">
+<img src="https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png" alt="WRO Banner">
+</div>
+
+<div class="card-body p-4 p-md-5">
+<div class="info-box">
+<h5><i class="fas fa-exclamation-circle"></i> ข้อกำหนดการส่งผลงาน</h5>
+<p class="mb-0">1. <b>Project Presentation :</b> อัพโหลดเป็นไฟล์ PDF (ความยาวไม่เกิน 20 หน้า หรือไม่เกิน 15 MB.)</p>
+<p class="mt-0 mb-2" style="font-size: 0.85rem; color: #555;">
+<b>Project Report :</b> Upload as a PDF file (Maximum 20 pages or 15 MB).
+</p>
+
+<p class="mb-0">2. <b>Video Presentation :</b> ความยาวไม่เกิน 90 วินาที (อัปโหลดลง Youtube และส่งลิงก์ เปิดการมองเห็นเป็นสาธารณะ)</p>
+<p class="mt-0 mb-2" style="font-size: 0.85rem; color: #555;">
+<b>Video Presentation:</b> Maximum 90 seconds (Upload to YouTube, provide the link, and set visibility to "Public" or "Unlisted").
+</p>
+
+<p class="mb-0"> * หากมีข้อสงสัยหรือต้องการสอบถามข้อมูลเพิ่มเติม ติดต่อ 02-459-4731-8 ต่อ 515-516</p>
+<p class="mt-0 mb-2" style="font-size: 0.85rem; color: #555;">
+For inquiries or more information, please contact 02-459-4731-8 ext. 515-516.
+</p>
+
+<hr>
+
+<p class="text-danger fw-bold mb-0">* ปิดรับผลงาน: 24 สิงหาคม 2569 (09:00 น.)</p>
+<p class="text-danger fw-bold mt-0" style="font-size: 0.85rem; opacity: 0.8;">
+Submissions close on: August 24, 2026 (09:00 AM)
+</p>
+</div>
+
+<form id="myForm">
+<div class="row g-4 mb-4">
+<div class="col-md-8">
+<label class="form-label"><i class="fa-solid fa-podcast"></i> Age Group</label>
+<select class="form-select" id="colA" required>
+<option value="">กำลังโหลดข้อมูล...</option>
+</select>
+</div>
+<div class="col-md-4">
+<label class="form-label"><i class="fas fa-users"></i> Team ID</label>
+<select class="form-select" id="colB" required>
+<option value="">เลือก ID</option>
+</select>
+</div>
+</div>
+
+<div class="row g-4 mb-4">
+<div class="col-md-6">
+<label class="form-label"><i class="fa-solid fa-pen-to-square"></i> Team Name</label>
+<select class="form-select bg-light" id="colC" required></select>
+</div>
+<div class="col-md-6">
+<label class="form-label"><i class="fa-solid fa-city"></i> Institution</label>
+<select class="form-select bg-light" id="colD" required></select>
+</div>
+</div>
+
+<div class="row g-4 mb-4">
+<div class="col-md-12">
+<div class="p-3 border rounded-3 bg-light">
+<label class="form-label fw-bold"><i class="fas fa-file-pdf text-danger"></i> 1. Upload Pesentation (PDF)</label>
+<input class="form-control" type="file" id="file" accept=".pdf" required>
+</div>
+</div>
+<div class="col-md-12">
+<div class="p-3 border rounded-3 bg-light">
+<label class="form-label fw-bold"><i class="fab fa-youtube text-danger"></i> 2. Link Video (Youtube)</label>
+<input type="url" class="form-control" id="data5" placeholder="https://www.youtube.com/watch?v=...">
+</div>
+</div>
+</div>
+
+<div class="text-center mt-5 d-grid d-md-flex justify-content-md-center gap-3">
+<button type="submit" class="btn btn-custom-save" id="btn1">
+<i class="fas fa-cloud-upload-alt me-2"></i> Upload
+</button>
+<button class="btn btn-custom-save" id="btn2" type="button" disabled style="display: none;">
+<span class="spinner-border spinner-border-sm me-2"></span> Uploading...
+</button>
+<button class="btn btn-outline-success border-2 rounded-pill px-4" id="btnStatus" type="button">
+<i class="fas fa-search me-2"></i> Check Status
+</button>
+</div>
+</form>
+</div>
+<div class="small-footer text-center">Organized by <b>Gammaco (Thailand) Co.,Ltd.</b></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+/** * [1] CONFIGURATION
+    */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx-WqymrLwhtL4Bd_szI3sRZke6y3-sWCj7KCL4ziOyWEH6fLxuT6URKeTK2lLM-RHu/exec";
+let globalData = {};
+
+/** * [2] LIFECYCLE - การทำงานเมื่อโหลดหน้าจอ
+    */
+window.onload = init;
+
+async function init() {
+const loader = document.getElementById('page-loader');
+const mainContent = document.getElementById('main-content');
+
+try {
+const response = await fetch(`${WEB_APP_URL}?action=getInitialData`);
+const data = await response.json();
+
+// ใช้เวลาจาก Server เป็นหลัก
+const now = data.config.serverTime; 
+
+// ตรวจสอบเวลาเปิด-ปิด
+if (now < data.config.open) {
+if(loader) loader.remove();
+          showStatusPage("Coming Soon", "ระบบจะเปิดให้อัพโหลดผลงานวันที่ 1 กรกฎาคม 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+          showStatusPage("Coming Soon", "เปิดให้อัพโหลดผลงานได้วันที่ 1 มิถุนายน 2569 เวลา 09.00 น.", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
+return;
+}
+
+if (now > data.config.close) {
+if(loader) loader.remove();
+          showStatusPage("Closed", "ขออภัย! ระบบปิดรับผลงานเรียบร้อยแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
           showStatusPage("Closed", "ระบบปิดให้อัพโหลดผลงานแล้ว", "https://img2.pic.in.th/Gemini_Generated_Image_ppt91xppt91xppt9.png");
-
-          return;
-
-        }
-
-
-
-        globalData = data.dropDown;
-
-        dropDownList(globalData);
-
-        
-
-        if(data.summary) document.getElementById('summaryDisplay').innerText = data.summary;
-
-
-
-        if(loader) loader.style.display = 'none';
-
-        if(mainContent) mainContent.style.display = 'block';
-
-        
-
-      } catch (err) {
-
-        console.error("Error:", err);
-
-        if(loader) loader.innerHTML = '<div class="text-center"><p class="text-danger fw-bold">Connection Error</p><button onclick="location.reload()" class="btn btn-sm btn-primary">Refresh</button></div>';
-
-      }
-
-    }
-
-
-
-    function dropDownList(obj) {
-
-      const colA = document.getElementById('colA');
-
-      const colB = document.getElementById('colB');
-
-      const colC = document.getElementById('colC');
-
-      const colD = document.getElementById('colD');
-
-      const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true });
-
-
-
-      let optionsA = Object.keys(obj)
-
-        .filter(x => x && x.trim() !== "")
-
-        .sort(naturalSort)
-
-        .reverse();
-
-
-
-      colA.length = 1;
-
-      optionsA.forEach(x => { colA.options.add(new Option(x, x)); });
-
-
-
-      if (colA.options.length > 1) {
-
-        colA.selectedIndex = 1; 
-
-        updateColB(obj[colA.value]);
-
-      }
-
-
-
-      colA.onchange = function() {
-
-        updateColB(obj[this.value]);
-
-      };
-
-
-
-      function updateColB(selectedCategory) {
-
-        colB.length = 1;
-
-        colC.length = 1;
-
-        colD.length = 1;
-
-
-
-        if (selectedCategory) {
-
-          let optionsB = Object.keys(selectedCategory)
-
-            .filter(y => y && y.trim() !== "")
-
-            .sort(naturalSort); 
-
-            
-
-          optionsB.forEach(y => { colB.options.add(new Option(y, y)); });
-
-        }
-
-      }
-
-
-
-      colB.onchange = function() {
-
-        colC.length = 1;
-
-        colD.length = 1;
-
-        let selectedSub = obj[colA.value][this.value];
-
-        if (selectedSub) {
-
-          let optionsC = Object.keys(selectedSub).filter(z => z && z.trim() !== "").sort(naturalSort).reverse();
-
-          optionsC.forEach(z => { colC.options.add(new Option(z, z)); });
-
-          
-
-          if (colC.options.length > 1) {
-
-            colC.selectedIndex = 1;
-
-            colC.dispatchEvent(new Event('change'));
-
-          }
-
-        }
-
-      };
-
-
-
-      colC.onchange = function() {
-
-        colD.length = 1;
-
-        let selectedD = obj[colA.value][colB.value][this.value];
-
-        if (selectedD) {
-
-          selectedD.filter(v => v && v.trim() !== "").sort(naturalSort).reverse().forEach(d => {
-
-            colD.options.add(new Option(d, d));
-
-          });
-
-          if (colD.options.length > 1) colD.selectedIndex = 1;
-
-        }
-
-      };
-
-    }
-
-
-
-    function submitForm() {
-
-      event.preventDefault();
-
-      $('#btn1').hide();
-
-      $('#btn2').show();
-
-
-
-      let obj = {
-
-        data1: $('#colA').val(),
-
-        data2: $('#colB').val(),
-
-        data3: $('#colC').val(),
-
-        data4: $('#colD').val(),
-
-        data5: $('#data5').val(),
-
-        data6: $('#data6').val()
-
-      };
-
-
-
-      let file = document.getElementById("file").files[0];
-
-      if (file) {
-
-        let reader = new FileReader();
-
-        reader.readAsDataURL(file);
-
-        reader.onload = function() {
-
-          obj.imagedata = reader.result.split(',')[1];
-
-          obj.filename = file.name;
-
-          obj.filetype = file.type;
-
-          savedata(obj);
-
-        }
-
-      } else {
-
-        savedata(obj);
-
-      }
-
-    }
-
-
-
-    function savedata(obj) {
-
-      google.script.run.withSuccessHandler(function() {
-
-        document.getElementById("myForm").reset();
-
-        $('#btn1').show();
-
-        $('#btn2').hide();
-
-        Swal.fire({
-
-          icon: 'success',
-
-          title: 'ส่งผลงานสำเร็จ',
-
-          html: '<p style="color: #009fe3;">ข้อมูลของคุณถูกบันทึกเรียบร้อยแล้ว</p>',
-
-          timer: 3000,
-
-          showConfirmButton: false
-
-        });
-
-        google.script.run.withSuccessHandler(function(t){ document.getElementById('summaryDisplay').innerText = t; }).getSummaryStats();
-
-      }).saveData(obj);
-
-    }
-
-
-
-    document.getElementById("btnStatus").addEventListener("click", function() {
-
-      window.open("https://gammaco.co.th/wro/teams-status-future-innovators/", "_blank");
-
-    });
-
-  </script>
-
+return;
+}
+
+// สถานะปกติ: โหลด Dropdown
+globalData = data.dropDown;
+setupDropdowns(globalData);
+
+// [IMPORTANT] ซ่อน Loader และแสดงเนื้อหาหลักเมื่อทุกอย่างพร้อม
+if(loader) loader.style.display = 'none';
+if(mainContent) mainContent.style.display = 'block';
+
+} catch (err) {
+console.error("Error:", err);
+if(loader) loader.innerHTML = '<div class="text-center"><p class="text-danger fw-bold">Connection Error</p><button onclick="location.reload()" class="btn btn-sm btn-primary">Refresh</button></div>';
+}
+}
+
+/** * [3] DROPDOWN LOGIC
+    */
+function setupDropdowns(obj) {
+const colA = document.getElementById('colA');
+const colB = document.getElementById('colB');
+const colC = document.getElementById('colC');
+const colD = document.getElementById('colD');
+
+const hasValue = (val) => val && val.toString().trim() !== "";
+const naturalSort = (a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+
+colA.innerHTML = '<option value="">กรุณาเลือกช่วงอายุ...</option>';
+
+Object.keys(obj).filter(hasValue).sort(naturalSort).forEach(x => colA.options.add(new Option(x, x)));
+
+colA.onchange = function() {
+colB.length = 1; colC.length = 1; colD.length = 1;
+if (obj[this.value]) {
+Object.keys(obj[this.value]).filter(hasValue).sort(naturalSort).forEach(y => colB.options.add(new Option(y, y)));
+}
+};
+
+colB.onchange = function() {
+colC.length = 1; colD.length = 1;
+const sub = obj[colA.value][this.value];
+if (sub) {
+Object.keys(sub).filter(hasValue).sort(naturalSort).forEach(z => colC.options.add(new Option(z, z)));
+if (colC.options.length > 1) { 
+colC.selectedIndex = 1; 
+colC.dispatchEvent(new Event('change')); 
+}
+}
+};
+
+colC.onchange = function() {
+colD.length = 1;
+const final = obj[colA.value][colB.value][this.value];
+if (final) {
+const uniqueFinal = [...new Set(final.filter(hasValue))];
+uniqueFinal.sort(naturalSort).forEach(d => colD.options.add(new Option(d, d)));
+if (colD.options.length > 1) colD.selectedIndex = 1;
+}
+};
+}
+
+/** * [4] FORM SUBMISSION
+    */
+document.getElementById('myForm').onsubmit = async function(e) {
+e.preventDefault();
+$('#btn1').hide(); $('#btn2').show();
+
+const fileInput = document.getElementById('file');
+const file = fileInput.files[0];
+const payload = {
+data1: $('#colA').val(),
+data2: $('#colB').val(),
+data3: $('#colC').val(),
+data4: $('#colD').val(),
+data5: $('#data5').val()
+};
+
+if (file) {
+const reader = new FileReader();
+reader.readAsDataURL(file);
+reader.onload = async function() {
+payload.imagedata = reader.result.split(',')[1];
+payload.filename = file.name;
+payload.filetype = file.type;
+await sendToGoogle(payload);
+};
+} else {
+await sendToGoogle(payload);
+}
+};
+
+async function sendToGoogle(data) {
+try {
+const response = await fetch(WEB_APP_URL, {
+method: 'POST',
+body: JSON.stringify(data)
+});
+const res = await response.json();
+if (res.status === 'success') {
+Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'บันทึกข้อมูลเรียบร้อยแล้ว' });
+document.getElementById('myForm').reset();
+} else {
+throw new Error(res.message);
+}
+} catch (err) {
+Swal.fire({ icon: 'error', title: 'ผิดพลาด', text: err.toString() });
+} finally {
+$('#btn1').show(); $('#btn2').hide();
+}
+}
+
+/** * [5] UI HELPERS
+    */
+function showStatusPage(title, message, imageUrl) {
+document.body.innerHTML = `
+       <div class="container text-center" style="padding-top: 100px; font-family: 'Prompt', sans-serif;">
+         <img src="${imageUrl}" style="width: 100%; max-width: 600px; margin-bottom: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+         <h1 class="fw-bold" style="color: #1a237e;">${title}</h1>
+         <p class="lead text-secondary">${message}</p>
+         <hr style="width: 200px; margin: 20px auto;">
+         <p>หากมีข้อสงสัยติดต่อ 02-459-4731-8 ต่อ 515-516</p>
+       </div>
+     `;
+}
+
+document.getElementById("btnStatus").onclick = () => window.open("https://gammaco.co.th/wro/teams-status-future-innovators/", "_blank");
+</script>
 </body>
-
-
-
 </html>
